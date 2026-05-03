@@ -1,8 +1,17 @@
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
 
-export async function fetchDeletedTasks() {
+export type DeletedTaskWithUser = Prisma.TaskGetPayload<{
+  include: {
+    user: {
+      select: { name: true };
+    };
+  };
+}>;
+
+export async function fetchDeletedTasks(): Promise<DeletedTaskWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.task.findMany({
