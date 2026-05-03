@@ -1,5 +1,8 @@
 import { restoreTaskAction } from '@/lib/actions';
-import { fetchDeletedTasks } from '@/lib/dal/archive';
+import {
+  fetchDeletedTasks,
+  type DeletedTaskWithUser,
+} from '@/lib/dal/archive';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 export default async function Page() {
@@ -35,7 +38,7 @@ export default async function Page() {
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {deletedTasks.map((task) => (
+                  {deletedTasks.map((task: DeletedTaskWithUser) => (
                     <tr key={task.id} className="w-full border-b py-3 text-sm last-of-type:border-none">
                       <td className="whitespace-nowrap px-4 py-3 font-medium">
                         {task.title}
