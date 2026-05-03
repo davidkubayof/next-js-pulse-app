@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client';
+import * as PrismaClient from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 
-export type AuditLogWithUser = Prisma.AuditLogGetPayload<{
+export type AuditLogWithUser = PrismaClient.Prisma.AuditLogGetPayload<{
   include: {
     user: { select: { name: true } };
   };

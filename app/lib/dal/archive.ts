@@ -1,11 +1,12 @@
-import { Prisma, type Task } from '@prisma/client';
+import * as PrismaClient from '@prisma/client';
+import { type Task } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
 
 export type { Task };
 
-export type DeletedTaskWithUser = Prisma.TaskGetPayload<{
+export type DeletedTaskWithUser = PrismaClient.Prisma.TaskGetPayload<{
   include: {
     user: {
       select: { name: true };

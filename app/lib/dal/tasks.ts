@@ -1,11 +1,12 @@
-import { Prisma, type Task } from '@prisma/client';
+import * as PrismaClient from '@prisma/client';
+import { type Task } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
 
 const ITEMS_PER_PAGE = 6;
 
-export type TaskWithUser = Prisma.TaskGetPayload<{
+export type TaskWithUser = PrismaClient.Prisma.TaskGetPayload<{
   include: {
     user: { select: { id: true; name: true; email: true } };
   };

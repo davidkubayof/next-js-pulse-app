@@ -1,4 +1,5 @@
-import { Prisma, type Task } from '@prisma/client';
+import * as PrismaClient from '@prisma/client';
+import { type Task } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay } from '@/lib/delay';
 
@@ -13,7 +14,7 @@ export type AuditPayload = {
 
 export async function runInTransactionWithAudit<T>(
   callback: (
-    tx: Prisma.TransactionClient,
+    tx: PrismaClient.Prisma.TransactionClient,
   ) => Promise<{ result: T; audit: AuditPayload }>,
 ): Promise<T> {
   await delay(500);
