@@ -1,9 +1,15 @@
-import type { Task } from '@prisma/client';
+import { Prisma, type Task } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
 
 const ITEMS_PER_PAGE = 6;
+
+export type TaskWithUser = Prisma.TaskGetPayload<{
+  include: {
+    user: { select: { id: true; name: true; email: true } };
+  };
+}>;
 
 function taskSearchWhere(query: string) {
   const q = query.trim();
@@ -72,7 +78,10 @@ export async function fetchTasksPages(query: string) {
   }
 }
 
-export async function fetchFilteredTasks(query: string, currentPage: number) {
+export async function fetchFilteredTasks(
+  query: string,
+  currentPage: number,
+): Promise<TaskWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
   const skip = (currentPage - 1) * ITEMS_PER_PAGE;
   const search = taskSearchWhere(query);

@@ -1,7 +1,9 @@
-import type { Prisma } from '@prisma/client';
+import { Prisma, type Task } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
+
+export type { Task };
 
 export type DeletedTaskWithUser = Prisma.TaskGetPayload<{
   include: {
@@ -29,7 +31,10 @@ export async function fetchDeletedTasks(): Promise<DeletedTaskWithUser[]> {
   }
 }
 
-export async function restoreDeletedTask(taskId: string, actorUserId: string) {
+export async function restoreDeletedTask(
+  taskId: string,
+  actorUserId: string,
+): Promise<Task> {
   return runInTransactionWithAudit(async (tx) => {
     const existing = await tx.task.findFirst({
       where: { id: taskId, isDeleted: true },

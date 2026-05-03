@@ -1,4 +1,4 @@
-import { fetchAuditLogs } from '@/lib/dal/auditLog';
+import { fetchAuditLogs, type AuditLogWithUser } from '@/lib/dal/auditLog';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { RelativeTime } from '@/ui/dashboard/audit-relative-time';
 
@@ -29,11 +29,10 @@ export default async function Page() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {logs.map((log: any) => (
+              {logs.map((log: AuditLogWithUser) => (
                 <tr key={log.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{log.user.name}</div>
-                    <div className="text-xs text-gray-500">{log.user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full 

@@ -1,7 +1,7 @@
 import { ArrowPathIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { lusitana } from '@/ui/fonts';
-import { fetchLatestAuditLogs } from '@/lib/dal/auditLog';
+import { fetchLatestAuditLogs, type AuditLogWithUser } from '@/lib/dal/auditLog';
 
 export default async function LatestLogs() {
   const latestLogs = await fetchLatestAuditLogs();
@@ -13,7 +13,7 @@ export default async function LatestLogs() {
       </h2>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4 shadow-sm">
         <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
-          {latestLogs.map((log, i) => {
+          {latestLogs.map((log: AuditLogWithUser, i: number) => {
             const dateObject = new Date(log.createdAt);
             const formattedDate = dateObject.toLocaleDateString('he-IL');
             const formattedTime = dateObject.toLocaleTimeString('he-IL', {
@@ -37,9 +37,6 @@ export default async function LatestLogs() {
                   <div className="min-w-0">
                     <p className="truncate text-base font-bold text-gray-900 leading-tight">
                       {log.user?.name || 'User'}
-                    </p>
-                    <p className="truncate text-xs text-gray-500 mt-0.5">
-                      {log.user?.email}
                     </p>
                   </div>
                 </div>

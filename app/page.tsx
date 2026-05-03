@@ -4,7 +4,6 @@ import {
   ServerIcon, 
   ShieldCheckIcon, 
   DocumentMagnifyingGlassIcon,
-  UserIcon,
   KeyIcon,
   CommandLineIcon
 } from '@heroicons/react/24/outline';
@@ -99,7 +98,7 @@ export default function Page() {
                   </div>
                   <div className="flex gap-3 text-[13px] font-mono text-slate-300">
                     <span className="text-indigo-400">02</span>
-                    <span>dal.auditLog.record(&#123; type: 'CREATE_TASK' &#125;)</span>
+                    <span>dal.auditLog.record(&#123; type: &apos;CREATE_TASK&apos; &#125;)</span>
                   </div>
                </div>
             </div>

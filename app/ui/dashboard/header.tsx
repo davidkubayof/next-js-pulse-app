@@ -1,6 +1,7 @@
 import { auth } from '../../../auth';
-import { UserCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { CreateTask } from '../tasks/buttons';
+import Image from 'next/image';
 
 export default async function Header() {
   const session = await auth();
@@ -22,7 +23,13 @@ export default async function Header() {
 
         <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gray-200 bg-gray-50 flex-shrink-0">
           {image ? (
-            <img src={image} alt="Profile" className="h-full w-full object-cover" />
+            <Image
+              src={image}
+              alt="Profile"
+              width={40}
+              height={40}
+              className="h-full w-full object-cover"
+            />
           ) : (
             <UserCircleIcon className="h-full w-full text-gray-300" />
           )}

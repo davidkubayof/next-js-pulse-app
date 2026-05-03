@@ -17,7 +17,13 @@ export function RelativeTime({ createdAt }: RelativeTimeProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timerId = window.setTimeout(() => {
+      setMounted(true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
   }, []);
 
   const date =

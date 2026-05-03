@@ -1,13 +1,20 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 
-export async function fetchLatestAuditLogs() {
+export type AuditLogWithUser = Prisma.AuditLogGetPayload<{
+  include: {
+    user: { select: { name: true } };
+  };
+}>;
+
+export async function fetchLatestAuditLogs(): Promise<AuditLogWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.auditLog.findMany({
       take: 5,
       orderBy: { createdAt: 'desc' },
-      include: { user: { select: { name: true, email: true } } },
+      include: { user: { select: { name: true } } },
     });
   } catch (error) {
     console.error('Database Error:', error);
@@ -15,7 +22,7 @@ export async function fetchLatestAuditLogs() {
   }
 }
 
-export async function fetchDailyLogsCount() {
+export async function fetchDailyLogsCount(): Promise<number> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     const startOfDay = new Date();
@@ -32,7 +39,7 @@ export async function fetchDailyLogsCount() {
   }
 }
 
-export async function fetchAuditLogs() {
+export async function fetchAuditLogs(): Promise<AuditLogWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.auditLog.findMany({
@@ -40,7 +47,6 @@ export async function fetchAuditLogs() {
         user: {
           select: {
             name: true,
-            email: true,
           },
         },
       },
