@@ -1,18 +1,13 @@
-// This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
-// https://nextjs.org/learn/dashboard-app/fetching-data
-// נתונים מותאמים לסכימה שלך: User, Task
 const users = [
   {
     id: '410544b2-4001-4271-9855-fec4b6a6442a',
     name: 'Ran Dev',
     email: 'ran@example.com',
-    // password: 'password123', 
   },
   {
     id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
     name: 'Lee Robinson',
     email: 'lee@nextmail.com',
-    // password: 'password123',
   },
 ];
 
@@ -23,7 +18,7 @@ const tasks = [
     description: 'לסיים את הגדרת ה-Client וה-Seed',
     priority: 'HIGH',
     status: 'IN_PROGRESS',
-    userId: users[0].id, // מקושר למשתמש הראשון
+    userId: users[0].id,
   },
   {
     id: 'task-2',
@@ -38,12 +33,11 @@ const tasks = [
     title: 'אופטימיזציה של שאילתות',
     description: 'שיפור ביצועי ה-Fetch',
     priority: 'LOW',
-    status: 'TODO',
-    userId: users[1].id, // מקושר למשתמש השני
+    status: 'DONE',
+    userId: users[1].id,
   },
 ];
 
-// דוגמה ללוגים (AuditLog)
 const logs = [
   {
     id: 'log-1',
@@ -58,7 +52,7 @@ const logs = [
     details: 'Created task-1',
     entityId: 'task-1',
     userId: users[0].id,
-  }
+  },
 ];
 
 export { users, tasks, logs };

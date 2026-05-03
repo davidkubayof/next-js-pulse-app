@@ -3,7 +3,7 @@ import Search from '@/ui/search';
 import Table from '@/ui/tasks/table';
 import { CreateTask } from '@/ui/tasks/buttons';
 import { lusitana } from '@/ui/fonts';
-import { InvoicesTableSkeleton } from '@/ui/skeletons';
+import { TasksTableSkeleton } from '@/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchTasksPages } from '@/lib/dal/tasks';
 import { Metadata } from 'next';
@@ -31,7 +31,7 @@ export default async function Page(props: {
         <Search placeholder="Search Task..." />
         <CreateTask />
       </div>
-       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+       <Suspense key={query + currentPage} fallback={<TasksTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">

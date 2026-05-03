@@ -1,29 +1,31 @@
-import { prisma } from "@/lib/db";
+import { prisma } from '@/lib/db';
+import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 
 export async function fetchLatestAuditLogs() {
-  return await prisma.auditLog.findMany({
-    take: 5,
-    orderBy: { createdAt: 'desc' },
-    include: { user: { select: { name: true, email: true } } }
-  });
+  await delay(DEMO_READ_DELAY_MS);
+  try {
+    return await prisma.auditLog.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true, email: true } } },
+    });
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch latest audit logs.');
+  }
 }
-/**
- * מחזירה את כמות הפעולות (Audit Logs) שבוצעו מהיום בחצות
- */
+
 export async function fetchDailyLogsCount() {
+  await delay(DEMO_READ_DELAY_MS);
   try {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
-    const count = await prisma.auditLog.count({
+    return await prisma.auditLog.count({
       where: {
-        createdAt: {
-          gte: startOfDay, // גדול או שווה לתחילת היום
-        },
+        createdAt: { gte: startOfDay },
       },
     });
-
-    return count;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch daily logs count.');
@@ -31,8 +33,9 @@ export async function fetchDailyLogsCount() {
 }
 
 export async function fetchAuditLogs() {
+  await delay(DEMO_READ_DELAY_MS);
   try {
-    const logs = await prisma.auditLog.findMany({
+    return await prisma.auditLog.findMany({
       include: {
         user: {
           select: {
@@ -42,10 +45,9 @@ export async function fetchAuditLogs() {
         },
       },
       orderBy: {
-        createdAt: 'desc', // הכי חדש למעלה
+        createdAt: 'desc',
       },
     });
-    return logs;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch audit logs.');

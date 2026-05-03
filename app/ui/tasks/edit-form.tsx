@@ -1,129 +1,206 @@
 'use client';
-//working no good
-import { UsersField, TaskForm } from '@/lib/definitions';
+
+import type { TaskFormFields, AssigneePickerUser } from '@/lib/definitions';
 import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
+  TagIcon,
+  DocumentTextIcon,
+  ExclamationCircleIcon,
   UserCircleIcon,
+  QueueListIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/ui/button';
-import { updateTask, State  } from '@/lib/actions';
+import { updateTask, State } from '@/lib/actions';
 import { useActionState } from 'react';
+import { TASK_PRIORITIES, TASK_STATUSES } from '@/lib/taskEnums';
 
-
-export default function EditInvoiceForm({
+export default function EditTaskForm({
   task,
   users,
 }: {
-  task: TaskForm;
-  users: UsersField[];
-}) {  
+  task: TaskFormFields;
+  users: AssigneePickerUser[];
+}) {
   const initialState: State = { message: null, errors: {} };
-  const updateInvoiceWithId = updateTask.bind(null, task.id);
-  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+  const updateTaskWithId = updateTask.bind(null, task.id);
+  const [state, formAction] = useActionState(updateTaskWithId, initialState);
+
+  const inputClasses =
+    'peer block w-full rounded-lg border border-gray-300 py-2.5 pl-10 text-sm outline-none placeholder:text-gray-400 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all duration-200 shadow-sm bg-white';
+  const labelClasses =
+    'mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-600 ml-0.5';
+
   return (
-    <form action={formAction}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Customer Name */}
-        <div className="mb-4">
-          <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-            Choose customer
-          </label>
-          <div className="relative">
-            <select
-              id="user"
-              name="userId"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue={task.id}
+    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full py-8 pb-20">
+      <form action={formAction} className="w-full max-w-3xl space-y-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-gray-50/50 border-b border-gray-100 px-6 py-4">
+            <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+              <QueueListIcon className="h-5 w-5 text-gray-700" />
+              Edit Task
+            </h2>
+          </div>
+
+          <div className="p-6 space-y-5">
+            <div>
+              <label htmlFor="userId" className={labelClasses}>
+                Assignee
+              </label>
+              <div className="relative group">
+                <select
+                  id="userId"
+                  name="userId"
+                  className={inputClasses}
+                  defaultValue={task.userId}
+                  aria-describedby="user-error"
+                >
+                  <option value="" disabled>
+                    Select team member
+                  </option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+                <UserCircleIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
+              </div>
+              {state.errors?.userId && (
+                <p
+                  id="user-error"
+                  className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1"
+                >
+                  <ExclamationCircleIcon className="h-3 w-3" />{' '}
+                  {state.errors.userId[0]}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="title" className={labelClasses}>
+                Task Title
+              </label>
+              <div className="relative group">
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  placeholder="What needs to be done?"
+                  className={inputClasses}
+                  defaultValue={task.title}
+                  aria-describedby="title-error"
+                />
+                <TagIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
+              </div>
+              {state.errors?.title && (
+                <p
+                  id="title-error"
+                  className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1"
+                >
+                  <ExclamationCircleIcon className="h-3 w-3" />{' '}
+                  {state.errors.title[0]}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="description" className={labelClasses}>
+                Description (Optional)
+              </label>
+              <div className="relative group">
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Provide context or steps..."
+                  className={`${inputClasses} min-h-[100px] py-3 resize-none`}
+                  defaultValue={task.description ?? ''}
+                />
+                <DocumentTextIcon className="absolute left-3 top-4 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
+              </div>
+              {state.errors?.description && (
+                <p className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1">
+                  <ExclamationCircleIcon className="h-3 w-3" />{' '}
+                  {state.errors.description[0]}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label htmlFor="priority" className={labelClasses}>
+                  Priority Level
+                </label>
+                <div className="relative group">
+                  <select
+                    id="priority"
+                    name="priority"
+                    className={inputClasses}
+                    defaultValue={task.priority}
+                  >
+                    {TASK_PRIORITIES.map((p) => (
+                      <option key={p} value={p}>
+                        {p.replace('_', ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <ExclamationCircleIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
+                </div>
+                {state.errors?.priority && (
+                  <p className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1">
+                    <ExclamationCircleIcon className="h-3 w-3" />{' '}
+                    {state.errors.priority[0]}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className={labelClasses}>Status</label>
+                <div className="relative group">
+                  <select id="status" name="status" className={inputClasses} defaultValue={task.status}>
+                    {TASK_STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {s.replace('_', ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <ExclamationCircleIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
+                </div>
+                {state.errors?.status && (
+                  <p className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1">
+                    <ExclamationCircleIcon className="h-3 w-3" />{' '}
+                    {state.errors.status[0]}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 border-t border-gray-100 px-6 py-4 flex items-center justify-end gap-3">
+            <Link
+              href="/dashboard/tasks"
+              className="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 border border-transparent hover:border-red-100 hover:bg-red-50 rounded-lg transition-all active:scale-95"
             >
-              <option value="" disabled>
-                Select a customer
-              </option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+              <XMarkIcon className="h-4 w-4 text-red-500 group-hover:rotate-90 transition-transform duration-200" />
+              Cancel
+            </Link>
+
+            <Button
+              type="submit"
+              className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white px-6 py-2 rounded-lg text-sm font-bold shadow-md shadow-gray-200 transition-all active:scale-[0.98]"
+            >
+              Save Changes
+            </Button>
           </div>
         </div>
 
-        {/* Task Title */}
-        <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
-            Choose an amount
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="title"
-                name="title"
-                type="number"
-                step="0.01"
-                defaultValue={task.id}
-                placeholder="Enter task title"
-                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              />
-              <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-            </div>
+        {state.message && (
+          <div className="bg-red-50 border border-red-100 rounded-lg p-3 flex items-center gap-2 text-red-700 shadow-sm animate-in fade-in slide-in-from-top-1">
+            <ExclamationCircleIcon className="h-4 w-4" />
+            <span className="text-xs font-bold">{state.message}</span>
           </div>
-        </div>
-
-        {/* Status */}
-        <fieldset>
-          <legend className="mb-2 block text-sm font-medium">
-            Set the invoice status
-          </legend>
-          <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
-            <div className="flex gap-4">
-              <div className="flex items-center">
-                <input
-                  id="todo"
-                  name="status"
-                  type="radio"
-                  value="todo"
-                  defaultChecked={task.status === 'pending'}
-                  className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
-                />
-                <label
-                  htmlFor="pending"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
-                >
-                  Pending <ClockIcon className="h-4 w-4" />
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="paid"
-                  name="status"
-                  type="radio"
-                  value="paid"
-                  defaultChecked={task.status === 'paid'}
-                  className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
-                />
-                <label
-                  htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white"
-                >
-                  Paid <CheckIcon className="h-4 w-4" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-      <div className="mt-6 flex justify-end gap-4">
-        <Link
-          href="/dashboard/tasks"
-          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-        >
-          Cancel
-        </Link>
-        <Button type="submit">Edit Invoice</Button>
-      </div>
-    </form>
+        )}
+      </form>
+    </div>
   );
 }

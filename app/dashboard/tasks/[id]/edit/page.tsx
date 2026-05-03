@@ -1,4 +1,4 @@
-import Form from '@/ui/tasks/edit-form';
+import EditTaskForm from '@/ui/tasks/edit-form';
 import Breadcrumbs from '@/ui/tasks/breadcrumbs';
 import { fetchTaskById } from '@/lib/dal/tasks';
 import { fetchUsers } from '@/lib/dal/users';
@@ -26,7 +26,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form task={task} users={users} />
+      <EditTaskForm task={task} users={users} />
     </main>
   );
 }

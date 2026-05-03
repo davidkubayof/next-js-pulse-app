@@ -34,13 +34,15 @@ export default async function TasksTable({
                     {
                       'bg-gray-100 text-gray-700 ring-gray-200': task.status === 'TODO',
                       'bg-blue-50 text-blue-700 ring-blue-200': task.status === 'IN_PROGRESS',
-                      'bg-emerald-50 text-emerald-700 ring-emerald-200': task.status === 'COMPLETED',
+                      'bg-emerald-50 text-emerald-700 ring-emerald-200': task.status === 'DONE',
+                      'bg-neutral-100 text-neutral-700 ring-neutral-200': task.status === 'CANCELLED',
                     }
                   )}>
                     <span className={clsx('mr-1.5 h-1.5 w-1.5 rounded-full', {
                        'bg-gray-500': task.status === 'TODO',
                        'bg-blue-500': task.status === 'IN_PROGRESS',
-                       'bg-emerald-500': task.status === 'COMPLETED',
+                       'bg-emerald-500': task.status === 'DONE',
+                       'bg-neutral-400': task.status === 'CANCELLED',
                     })} />
                     {task.status.replace('_', ' ')}
                   </span>
@@ -50,6 +52,7 @@ export default async function TasksTable({
                     <div className="flex items-center gap-2">
                        <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">Priority:</span>
                        <span className={clsx("text-xs font-bold px-2 py-0.5 rounded-md", {
+                          'bg-violet-50 text-violet-800': task.priority === 'URGENT',
                           'bg-red-50 text-red-700': task.priority === 'HIGH',
                           'bg-orange-50 text-orange-700': task.priority === 'MEDIUM',
                           'bg-sky-50 text-sky-700': task.priority === 'LOW',
@@ -88,6 +91,7 @@ export default async function TasksTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-4">
                     <span className={clsx("inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold ring-1 ring-inset uppercase", {
+                      'bg-violet-50 text-violet-800 ring-violet-100': task.priority === 'URGENT',
                       'bg-red-50 text-red-700 ring-red-100': task.priority === 'HIGH',
                       'bg-orange-50 text-orange-700 ring-orange-100': task.priority === 'MEDIUM',
                       'bg-sky-50 text-sky-700 ring-sky-100': task.priority === 'LOW',
@@ -104,13 +108,15 @@ export default async function TasksTable({
                       {
                         'bg-gray-50 text-gray-600 ring-gray-200': task.status === 'TODO',
                         'bg-blue-50 text-blue-700 ring-blue-200': task.status === 'IN_PROGRESS',
-                        'bg-emerald-50 text-emerald-700 ring-emerald-200': task.status === 'COMPLETED',
+                        'bg-emerald-50 text-emerald-700 ring-emerald-200': task.status === 'DONE',
+                        'bg-neutral-50 text-neutral-700 ring-neutral-200': task.status === 'CANCELLED',
                       }
                     )}>
                       <span className={clsx('mr-1.5 h-1.5 w-1.5 rounded-full', {
                         'bg-gray-400': task.status === 'TODO',
                         'bg-blue-500': task.status === 'IN_PROGRESS',
-                        'bg-emerald-500': task.status === 'COMPLETED',
+                        'bg-emerald-500': task.status === 'DONE',
+                        'bg-neutral-400': task.status === 'CANCELLED',
                       })} />
                       {task.status.replace('_', ' ')}
                     </span>

@@ -1,13 +1,22 @@
 'use server';
 
-import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '../../auth';
 import { AuthError } from 'next-auth';
-import { auth } from '../../auth'; // כדי לדעת מי המשתמש שמחק
-import { prisma } from "@/lib/db";
-import { restoreTask } from '@/lib/dal/archive';
+import { auth } from '../../auth';
+import {
+  createTaskFormSchema,
+  updateTaskFormSchema,
+  updateTaskStatusSchema,
+} from '@/lib/validation/task';
+import {
+  createTaskRecord,
+  softDeleteTaskRecord,
+  updateTaskRecord,
+  updateTaskStatusRecord,
+} from '@/lib/dal/tasks';
+import { restoreDeletedTask } from '@/lib/dal/archive';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -27,54 +36,45 @@ export async function authenticate(
     throw error;
   }
 }
+
 export async function updateTaskStatus(id: string, status: string) {
-  try {
-    await prisma.task.update({
-      where: { id },
-      data: { status },
-    });
-
-    // זה יגרום ל-Next.js לעדכן את הנתונים ברקע
-    revalidatePath('/dashboard');
-  } catch (error) {
-    console.error('Failed to update task:', error);
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('You must be logged in.');
   }
+
+  const parsed = updateTaskStatusSchema.safeParse({ id, status });
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues.map((e) => e.message).join(', '));
+  }
+
+  await updateTaskStatusRecord(
+    parsed.data.id,
+    parsed.data.status,
+    session.user.id,
+  );
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/auditlog');
 }
-const FormSchema = z.object({
- id: z.string(),
-  
-  // פתרון ל-String: הודעה בתוך ה-min
-  userId: z.string().min(1, "Please select a user."),
-  
-  title: z.string().min(1, "Please enter a title."),
-  
-  description: z.string().optional(),
-
-  // פתרון ל-Enum: הגדרה נקייה ללא אובייקט הגדרות
-  // השגיאה שלך נבעה מהניסיון להכניס אובייקט כפרמטר שני
-  status: z.enum(['TODO', 'IN_PROGRESS', 'DONE', 'CANCELLED']),
-
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']),
-  
-  date: z.string(),
-});
 
 export type State = {
   errors?: {
     userId?: string[];
     title?: string[];
     status?: string[];
-    priority?: string[]; // פשוט מוסיפים את כל השדות האופציונליים כאן
+    priority?: string[];
     description?: string[];
   };
   message?: string | null;
 };
-const CreateTask = FormSchema.omit({ id: true, date: true });
-const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function createTask(prevState: State, formData: FormData) {
-  // 1. וולידציה (בדיוק כמו ב-Invoice)
-  const validatedFields = CreateTask.safeParse({
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { message: 'You must be logged in.', errors: {} };
+  }
+
+  const validatedFields = createTaskFormSchema.safeParse({
     userId: formData.get('userId'),
     title: formData.get('title'),
     description: formData.get('description'),
@@ -82,110 +82,115 @@ export async function createTask(prevState: State, formData: FormData) {
     priority: formData.get('priority'),
   });
 
-  // 2. אם נכשל - החזרת שגיאות
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Task.',
+      message: 'Validation failed. Could not create task.',
     };
   }
 
-  // 3. הכנת הנתונים (כאן נכנס השינוי לפריזמה)
   const { userId, title, description, status, priority } = validatedFields.data;
 
   try {
-    // שימוש ב-Prisma במקום SQL גולמי
-    await prisma.task.create({
-      data: {
+    await createTaskRecord(
+      {
         userId,
         title,
-        description: description || "", // מוודא שלא נכנס null אם לא חובה
+        description: description?.trim() ? description.trim() : null,
         status,
         priority,
-        // createdAt נוצר אוטומטית לפי הסכימה שלך
       },
-    });
-  } catch (error) {
+      session.user.id,
+    );
+  } catch {
     return {
-      message: 'Database Error: Failed to Create Task.',
+      message: 'Database error: failed to create task.',
+      errors: {},
     };
   }
 
-  // 4. ריענון וניתוב
+  revalidatePath('/dashboard');
   revalidatePath('/dashboard/tasks');
+  revalidatePath('/dashboard/auditlog');
   redirect('/dashboard/tasks');
 }
+
 export async function updateTask(
   id: string,
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const title = formData.get('title') as string;
-  const userId = formData.get('userId') as string;
-  const status = formData.get('status') as string;
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { message: 'You must be logged in.', errors: {} };
+  }
+
+  const validatedFields = updateTaskFormSchema.safeParse({
+    userId: formData.get('userId'),
+    title: formData.get('title'),
+    description: formData.get('description'),
+    status: formData.get('status'),
+    priority: formData.get('priority'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Validation failed. Could not update task.',
+    };
+  }
+
+  const { userId, title, description, status, priority } = validatedFields.data;
 
   try {
-    await prisma.task.update({
-      where: { id },
-      data: {
+    await updateTaskRecord(
+      id,
+      {
         title,
+        description: description?.trim() ? description.trim() : null,
         userId,
         status,
+        priority,
       },
-    });
-    // הערה: לא שמים כאן return! 
-    // אנחנו רוצים שהקוד ימשיך ל-revalidate ול-redirect למטה.
-  } catch (e) {
-    // רק במקרה של שגיאה אנחנו עוצרים ומחזירים תשובה לטופס
+      session.user.id,
+    );
+  } catch {
     return {
-      message: 'Database Error: Failed to Update Task.',
+      message: 'Database error: failed to update task.',
       errors: {},
     };
   }
 
-  // השורות האלו עכשיו ירוצו (הן כבר לא יהיו אפורות)
+  revalidatePath('/dashboard');
   revalidatePath('/dashboard/tasks');
+  revalidatePath('/dashboard/auditlog');
   redirect('/dashboard/tasks');
 }
-export async function deleteTask(id: string) { // הסרנו את formData
+
+export async function deleteTask(id: string) {
   const session = await auth();
-  
-  // הגנה בסיסית - אם אין משתמש, אין הרשאה
   if (!session?.user?.id) {
     throw new Error('You must be logged in to delete a task.');
   }
 
-  const userId = session.user.id;
+  await softDeleteTaskRecord(id, session.user.id);
 
-  try {
-    await prisma.$transaction(async (tx) => {
-      // עדכון המשימה
-      const deletedTask = await tx.task.update({
-        where: { id },
-        data: { isDeleted: true },
-      });
-
-      // יצירת לוג
-      await tx.auditLog.create({
-        data: {
-          action: 'DELETE_TASK',
-          entityId: id,
-          userId: userId,
-          details: `Task titled "${deletedTask.title}" was moved to archive.`,
-        },
-      });
-    });
-
-    revalidatePath('/dashboard/tasks');
-    revalidatePath('/dashboard/logs');
-    
-  } catch (e) {
-    console.error('Database Error:', e);
-    throw new Error('Failed to Delete Task');
-  }
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/tasks');
+  revalidatePath('/dashboard/auditlog');
+  revalidatePath('/dashboard/archive');
 }
+
 export async function restoreTaskAction(id: string) {
-  await restoreTask(id);
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('You must be logged in to restore a task.');
+  }
+
+  await restoreDeletedTask(id, session.user.id);
+
+  revalidatePath('/dashboard');
   revalidatePath('/dashboard/archive');
   revalidatePath('/dashboard/tasks');
+  revalidatePath('/dashboard/auditlog');
 }

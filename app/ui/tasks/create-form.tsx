@@ -13,6 +13,7 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/ui/button';
+import { TASK_PRIORITIES, TASK_STATUSES } from '@/lib/taskEnums';
 
 export default function TaskForm({ users }: { users: { id: string; name: string }[] }) {
   const initialState: State = { message: null, errors: {} };
@@ -82,27 +83,35 @@ export default function TaskForm({ users }: { users: { id: string; name: string 
               <div>
                 <label htmlFor="priority" className={labelClasses}>Priority Level</label>
                 <div className="relative group">
-                  <select id="priority" name="priority" className={inputClasses} defaultValue="MEDIUM">
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
+                  <select id="priority" name="priority" className={inputClasses} defaultValue="MEDIUM" aria-describedby="priority-error">
+                    {TASK_PRIORITIES.map((p) => (
+                      <option key={p} value={p}>{p.replace('_', ' ')}</option>
+                    ))}
                   </select>
                   <ExclamationCircleIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
                 </div>
+                {state.errors?.priority && (
+                  <p id="priority-error" className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1">
+                    <ExclamationCircleIcon className="h-3 w-3" /> {state.errors.priority[0]}
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className={labelClasses}>Status</label>
-                <div className="flex gap-2 p-1 bg-gray-100 rounded-lg h-[44px]">
-                  {['TODO', 'IN_PROGRESS', 'DONE'].map((s) => (
-                    <label key={s} className="relative flex-1 cursor-pointer">
-                      <input type="radio" name="status" value={s} defaultChecked={s === 'TODO'} className="sr-only peer" />
-                      <div className="h-full flex items-center justify-center text-[11px] font-bold text-gray-500 peer-checked:bg-white peer-checked:text-gray-900 peer-checked:shadow-sm rounded-md transition-all uppercase tracking-tighter">
-                        {s.replace('_', ' ').toLowerCase()}
-                      </div>
-                    </label>
-                  ))}
+                <label htmlFor="status" className={labelClasses}>Status</label>
+                <div className="relative group">
+                  <select id="status" name="status" className={inputClasses} defaultValue="TODO" aria-describedby="status-error">
+                    {TASK_STATUSES.map((s) => (
+                      <option key={s} value={s}>{s.replace('_', ' ')}</option>
+                    ))}
+                  </select>
+                  <ExclamationCircleIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400 group-focus-within:text-gray-900" />
                 </div>
+                {state.errors?.status && (
+                  <p id="status-error" className="mt-1 text-[11px] font-medium text-red-600 flex items-center gap-1">
+                    <ExclamationCircleIcon className="h-3 w-3" /> {state.errors.status[0]}
+                  </p>
+                )}
               </div>
             </div>
           </div>

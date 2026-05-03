@@ -1,5 +1,6 @@
 import { fetchAuditLogs } from '@/lib/dal/auditLog';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { RelativeTime } from '@/ui/dashboard/audit-relative-time';
 
 export default async function Page() {
   const logs = await fetchAuditLogs();
@@ -46,7 +47,7 @@ export default async function Page() {
                     {log.details || <span className="text-gray-300 italic">No details</span>}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(log.createdAt).toLocaleString('he-IL')}
+                    <RelativeTime createdAt={log.createdAt} />
                   </td>
                 </tr>
               ))}

@@ -26,9 +26,9 @@ export function UpdateTask({ id }: { id: string }) {
 }
 
 export function DeleteTask({ id }: { id: string }) {
-  const deleteInvoiceWithId = deleteTask.bind(null, id);
+  const deleteTaskWithId = deleteTask.bind(null, id);
   return (
-    <form action={deleteInvoiceWithId}>
+    <form action={deleteTaskWithId}>
       <button 
         type="submit" 
         className="group inline-flex items-center justify-center rounded-xl border border-neutral-200 bg-white p-3 text-neutral-400 transition-all hover:border-red-500 hover:bg-red-50/50 hover:text-red-600 hover:shadow-md"

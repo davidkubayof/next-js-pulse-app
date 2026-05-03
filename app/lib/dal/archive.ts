@@ -1,40 +1,45 @@
 import { prisma } from '@/lib/db';
+import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
+import { runInTransactionWithAudit } from '@/lib/dal/withAudit';
 
 export async function fetchDeletedTasks() {
+  await delay(DEMO_READ_DELAY_MS);
   try {
-    const deletedTasks = await prisma.task.findMany({
-      where: {
-        isDeleted: true, // זה הסינון המרכזי שביקשת
-      },
+    return await prisma.task.findMany({
+      where: { isDeleted: true },
       include: {
         user: {
-          select: {
-            name: true, // מביא גם את שם המשתמש שיצר את המשימה, שיהיה נוח לתצוגה
-          },
+          select: { name: true },
         },
       },
-      orderBy: {
-        updatedAt: 'desc', // מציג את אלו שנמחקו לאחרונה ראשונים
-      },
+      orderBy: { updatedAt: 'desc' },
     });
-
-    return deletedTasks;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch archived tasks.');
   }
 }
-export async function restoreTask(id: string) {
-  try {
-    const restoredTask = await prisma.task.update({
-      where: { id },
-      data: {
-        isDeleted: false,
-      },
+
+export async function restoreDeletedTask(taskId: string, actorUserId: string) {
+  return runInTransactionWithAudit(async (tx) => {
+    const existing = await tx.task.findFirst({
+      where: { id: taskId, isDeleted: true },
     });
-    return restoredTask;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to restore task.');
-  }
+    if (!existing) {
+      throw new Error('Archived task not found.');
+    }
+    const restored = await tx.task.update({
+      where: { id: taskId },
+      data: { isDeleted: false },
+    });
+    return {
+      result: restored,
+      audit: {
+        action: 'TASK_RESTORED',
+        entityId: taskId,
+        userId: actorUserId,
+        details: `Restored task "${restored.title}".`,
+      },
+    };
+  });
 }

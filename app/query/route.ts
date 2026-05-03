@@ -1,17 +1,10 @@
-import { prisma } from '@/lib/db';
-
-
+import { fetchQuerySnapshot } from '@/lib/dal/query';
 
 export async function GET() {
   try {
-    const [users, tasks, logs] = await Promise.all([
-      prisma.user.findMany(),
-      prisma.task.findMany(),
-      prisma.auditLog.findMany(),
-    ]);
-
-    return Response.json({ users, tasks, logs });
-  } catch (error) {
-    return Response.json({ error: "Data fetch failed" }, { status: 500 });
+    const payload = await fetchQuerySnapshot();
+    return Response.json(payload);
+  } catch {
+    return Response.json({ error: 'Data fetch failed' }, { status: 500 });
   }
 }
