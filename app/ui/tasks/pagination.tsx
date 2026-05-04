@@ -6,12 +6,16 @@ import Link from 'next/link';
 import { generatePagination } from '@/lib/utils';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+export default function Pagination({
+  totalPages,
+}: {
+  totalPages: number;
+}): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
  
-  const createPageURL = (pageNumber: number | string) => {
+  const createPageURL = (pageNumber: number | string): string => {
     const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
     return `${pathname}?${params.toString()}`;
@@ -68,7 +72,7 @@ function PaginationNumber({
   href: string;
   position?: 'first' | 'last' | 'middle' | 'single';
   isActive: boolean;
-}) {
+}): React.JSX.Element {
   const className = clsx(
     'flex h-10 w-10 items-center justify-center text-sm border',
     {
@@ -97,7 +101,7 @@ function PaginationArrow({
   href: string;
   direction: 'left' | 'right';
   isDisabled?: boolean;
-}) {
+}): React.JSX.Element {
   const className = clsx(
     'flex h-10 w-10 items-center justify-center rounded-md border',
     {

@@ -12,7 +12,7 @@ export type TaskWithUser = PrismaClient.Prisma.TaskGetPayload<{
   };
 }>;
 
-function taskSearchWhere(query: string) {
+function taskSearchWhere(query: string): PrismaClient.Prisma.TaskWhereInput {
   const q = query.trim();
   if (!q) {
     return {};
@@ -35,7 +35,11 @@ function taskSearchWhere(query: string) {
   };
 }
 
-export async function fetchCardData() {
+export async function fetchCardData(): Promise<{
+  totalTasksCount: number;
+  inProgressCount: number;
+  completedCount: number;
+}> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     const [totalTasksCount, inProgressCount, completedCount] = await Promise.all([
@@ -63,7 +67,7 @@ export async function fetchLatestTasks(): Promise<Task[]> {
   }
 }
 
-export async function fetchTasksPages(query: string) {
+export async function fetchTasksPages(query: string): Promise<number> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     const search = taskSearchWhere(query);
@@ -104,7 +108,7 @@ export async function fetchFilteredTasks(
   }
 }
 
-export async function fetchTaskById(id: string) {
+export async function fetchTaskById(id: string): Promise<Task | null> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.task.findFirst({
@@ -124,7 +128,10 @@ type CreateTaskInput = {
   priority: string;
 };
 
-export async function createTaskRecord(input: CreateTaskInput, actorUserId: string) {
+export async function createTaskRecord(
+  input: CreateTaskInput,
+  actorUserId: string,
+): Promise<Task> {
   return runInTransactionWithAudit(async (tx) => {
     const task = await tx.task.create({
       data: {
@@ -159,7 +166,7 @@ export async function updateTaskRecord(
   id: string,
   input: UpdateTaskInput,
   actorUserId: string,
-) {
+): Promise<Task> {
   return runInTransactionWithAudit(async (tx) => {
     const existing = await tx.task.findFirst({
       where: { id, isDeleted: false },
@@ -197,7 +204,7 @@ export async function updateTaskStatusRecord(
   id: string,
   status: string,
   actorUserId: string,
-) {
+): Promise<Task> {
   return runInTransactionWithAudit(async (tx) => {
     const existing = await tx.task.findFirst({
       where: { id, isDeleted: false },
@@ -221,7 +228,10 @@ export async function updateTaskStatusRecord(
   });
 }
 
-export async function softDeleteTaskRecord(id: string, actorUserId: string) {
+export async function softDeleteTaskRecord(
+  id: string,
+  actorUserId: string,
+): Promise<Task> {
   return runInTransactionWithAudit(async (tx) => {
     const existing = await tx.task.findFirst({
       where: { id, isDeleted: false },

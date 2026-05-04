@@ -5,7 +5,7 @@ import {
 } from '@/lib/dal/archive';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-export default async function Page() {
+export default async function Page(): Promise<React.JSX.Element> {
   const deletedTasks = await fetchDeletedTasks();
 
   return (

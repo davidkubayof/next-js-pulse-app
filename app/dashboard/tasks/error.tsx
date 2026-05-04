@@ -9,7 +9,7 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function Error({ error, reset }: ErrorProps) {
+export default function Error({ error, reset }: ErrorProps): React.JSX.Element {
   useEffect(() => {
     // מומלץ לשלוח כאן את השגיאה למערכת ניטור חיצונית
     console.error('Captured Error:', error);

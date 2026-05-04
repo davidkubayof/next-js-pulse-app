@@ -2,7 +2,7 @@
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 //good
-export function CardSkeleton() {
+export function CardSkeleton(): React.JSX.Element {
   return (
     <div
       className={`${shimmer} relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm`}
@@ -18,7 +18,7 @@ export function CardSkeleton() {
   );
 }
 //good
-export function CardsSkeleton() {
+export function CardsSkeleton(): React.JSX.Element {
   return (
     <>
       <CardSkeleton />
@@ -29,7 +29,7 @@ export function CardsSkeleton() {
   );
 }
 //good
-export function TasksChartSkeleton() {
+export function TasksChartSkeleton(): React.JSX.Element {
   return (
     <div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>
       <div className="mb-4 h-8 w-36 rounded-md bg-gray-100" />
@@ -44,7 +44,7 @@ export function TasksChartSkeleton() {
   );
 }
 //good
-export function LatestLogsSkeleton() {
+export function LatestLogsSkeleton(): React.JSX.Element {
   return (
     <div
       className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
@@ -67,7 +67,7 @@ export function LatestLogsSkeleton() {
   );
 }
 //good?
-export default function DashboardSkeleton() {
+export default function DashboardSkeleton(): React.JSX.Element {
   return (
     <>
       <div
@@ -88,7 +88,7 @@ export default function DashboardSkeleton() {
 }
 //good
 // תוסיף את זה לקובץ skeletons.tsx
-export function HeaderSkeleton() {
+export function HeaderSkeleton(): React.JSX.Element {
   return (
     <div className="flex items-center gap-3">
       <div className="hidden sm:block">
@@ -103,7 +103,7 @@ export function HeaderSkeleton() {
 
 
 
-export function TableRowSkeleton() {
+export function TableRowSkeleton(): React.JSX.Element {
   return (
     <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
       <td className="relative overflow-hidden whitespace-nowrap py-3 pl-6 pr-3">
@@ -133,7 +133,7 @@ export function TableRowSkeleton() {
     </tr>
   );
 }
-export function TasksMobileSkeleton() {
+export function TasksMobileSkeleton(): React.JSX.Element {
   return (
     <div className="mb-2 w-full rounded-md bg-white p-4">
       <div className="flex items-center justify-between border-b border-gray-100 pb-8">
@@ -156,7 +156,7 @@ export function TasksMobileSkeleton() {
     </div>
   );
 }
-export function TasksTableSkeleton() {
+export function TasksTableSkeleton(): React.JSX.Element {
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -209,7 +209,7 @@ export function TasksTableSkeleton() {
     </div>
   );
 }
-export function LatestAuditRowSkeleton() {
+export function LatestAuditRowSkeleton(): React.JSX.Element {
   return (
     <div className="flex flex-row items-center justify-between border-b border-gray-100 py-4">
       <div className="flex items-center">

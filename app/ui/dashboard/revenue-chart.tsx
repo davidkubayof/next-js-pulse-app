@@ -14,7 +14,11 @@ import { updateTaskStatus } from '@/lib/actions';
 
 type TaskRow = Pick<Task, 'id' | 'title' | 'status' | 'createdAt'>;
 
-export default function TaskList({ initialTasks }: { initialTasks: TaskRow[] }) {
+export default function TaskList({
+  initialTasks,
+}: {
+  initialTasks: TaskRow[];
+}): React.JSX.Element {
   const [isPending, startTransition] = useTransition();
 
   const [optimisticTasks, addOptimisticTask] = useOptimistic(
@@ -25,7 +29,10 @@ export default function TaskList({ initialTasks }: { initialTasks: TaskRow[] }) 
       ),
   );
 
-  const handleStatusChange = async (id: string, currentStatus: string) => {
+  const handleStatusChange = async (
+    id: string,
+    currentStatus: string,
+  ): Promise<void> => {
     let nextStatus = 'TODO';
     if (currentStatus === 'TODO') nextStatus = 'IN_PROGRESS';
     else if (currentStatus === 'IN_PROGRESS') nextStatus = 'DONE';

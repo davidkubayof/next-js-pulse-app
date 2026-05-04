@@ -21,7 +21,7 @@ import { restoreDeletedTask } from '@/lib/dal/archive';
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
-) {
+): Promise<string | undefined> {
   try {
     await signIn('credentials', formData);
   } catch (error) {
@@ -37,7 +37,7 @@ export async function authenticate(
   }
 }
 
-export async function updateTaskStatus(id: string, status: string) {
+export async function updateTaskStatus(id: string, status: string): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('You must be logged in.');
@@ -68,7 +68,7 @@ export type State = {
   message?: string | null;
 };
 
-export async function createTask(prevState: State, formData: FormData) {
+export async function createTask(prevState: State, formData: FormData): Promise<State> {
   const session = await auth();
   if (!session?.user?.id) {
     return { message: 'You must be logged in.', errors: {} };
@@ -167,7 +167,7 @@ export async function updateTask(
   redirect('/dashboard/tasks');
 }
 
-export async function deleteTask(id: string) {
+export async function deleteTask(id: string): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('You must be logged in to delete a task.');
@@ -181,7 +181,7 @@ export async function deleteTask(id: string) {
   revalidatePath('/dashboard/archive');
 }
 
-export async function restoreTaskAction(id: string) {
+export async function restoreTaskAction(id: string): Promise<void> {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('You must be logged in to restore a task.');

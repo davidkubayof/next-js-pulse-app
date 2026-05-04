@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { lusitana } from '@/ui/fonts';
 import { fetchLatestAuditLogs, type AuditLogWithUser } from '@/lib/dal/auditLog';
 
-export default async function LatestLogs() {
+export default async function LatestLogs(): Promise<React.JSX.Element> {
   const latestLogs = await fetchLatestAuditLogs();
 
   return (

@@ -9,7 +9,7 @@ export default async function TasksTable({
 }: {
   query: string;
   currentPage: number;
-}) {
+}): Promise<React.JSX.Element> {
   const tasks = await fetchFilteredTasks(query, currentPage);
 
   return (

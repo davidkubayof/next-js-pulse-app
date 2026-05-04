@@ -3,7 +3,7 @@ type RevenueMonth = {
   revenue: number;
 };
 
-export const formatCurrency = (amount: number) => {
+export const formatCurrency = (amount: number): string => {
   return (amount / 100).toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -13,7 +13,7 @@ export const formatCurrency = (amount: number) => {
 export const formatDateToLocal = (
   dateStr: string,
   locale: string = 'en-US',
-) => {
+): string => {
   const date = new Date(dateStr);
   const options: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -72,7 +72,10 @@ export function formatRelativeTime(
   return rtf.format(0, 'second');
 }
 
-export const generateYAxis = (revenue: RevenueMonth[]) => {
+export const generateYAxis = (revenue: RevenueMonth[]): {
+  yAxisLabels: string[];
+  topLabel: number;
+} => {
   const yAxisLabels = [];
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
@@ -84,7 +87,10 @@ export const generateYAxis = (revenue: RevenueMonth[]) => {
   return { yAxisLabels, topLabel };
 };
 
-export const generatePagination = (currentPage: number, totalPages: number) => {
+export const generatePagination = (
+  currentPage: number,
+  totalPages: number,
+): Array<number | string> => {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }

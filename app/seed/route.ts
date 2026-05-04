@@ -2,7 +2,7 @@ import { seedDatabase } from '@/lib/dal/seed';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     await seedDatabase();
     return Response.json({ message: 'Database seeded successfully' });

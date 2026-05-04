@@ -6,7 +6,7 @@ import Header from '@/ui/dashboard/header';
 import { lusitana } from '@/ui/fonts';
 import { Suspense } from 'react';
 import { TasksChartSkeleton, LatestLogsSkeleton, CardsSkeleton, HeaderSkeleton } from '@/ui/skeletons';//
-export default async function Page() {
+export default async function Page(): Promise<React.JSX.Element> {
   return (
     <main>
       <div className="flex w-full items-center justify-between mb-8">

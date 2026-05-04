@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { lusitana } from '@/ui/fonts';
 
-export default function Page() {
+export default function Page(): React.JSX.Element {
   return (
     <main className="flex min-h-screen flex-col p-6 bg-slate-50 text-slate-900 overflow-x-hidden">
       

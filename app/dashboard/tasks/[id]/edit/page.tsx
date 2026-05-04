@@ -4,7 +4,9 @@ import { fetchTaskById } from '@/lib/dal/tasks';
 import { fetchUsers } from '@/lib/dal/users';
 import { notFound } from 'next/navigation';
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: {
+  params: Promise<{ id: string }>;
+}): Promise<React.JSX.Element> {
   const params = await props.params;
   const id = params.id;
   const [task, users] = await Promise.all([

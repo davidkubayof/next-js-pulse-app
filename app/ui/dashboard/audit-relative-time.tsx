@@ -13,7 +13,7 @@ type RelativeTimeProps = {
  * Hydration-safe relative label: SSR + first client paint use absolute locale string;
  * after mount, switch to Intl relative time (depends on client clock).
  */
-export function RelativeTime({ createdAt }: RelativeTimeProps) {
+export function RelativeTime({ createdAt }: RelativeTimeProps): React.JSX.Element {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

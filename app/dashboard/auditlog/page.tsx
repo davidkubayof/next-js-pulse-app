@@ -2,7 +2,7 @@ import { fetchAuditLogs, type AuditLogWithUser } from '@/lib/dal/auditLog';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { RelativeTime } from '@/ui/dashboard/audit-relative-time';
 
-export default async function Page() {
+export default async function Page(): Promise<React.JSX.Element> {
   const logs = await fetchAuditLogs();
 
   return (

@@ -3,7 +3,7 @@ import TaskList from './revenue-chart';
 import { lusitana } from '@/ui/fonts';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 
-export default async function LatestTasksWrapper() {
+export default async function LatestTasksWrapper(): Promise<React.JSX.Element> {
   const tasks = await fetchLatestTasks();
 
   if (!tasks || tasks.length === 0) {

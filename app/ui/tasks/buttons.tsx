@@ -2,7 +2,7 @@ import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { deleteTask } from '@/lib/actions';
 
-export function CreateTask() {
+export function CreateTask(): React.JSX.Element {
   return (
     <Link
       href="/dashboard/tasks/create"
@@ -14,7 +14,7 @@ export function CreateTask() {
   );
 }
 
-export function UpdateTask({ id }: { id: string }) {
+export function UpdateTask({ id }: { id: string }): React.JSX.Element {
   return (
     <Link
       href={`/dashboard/tasks/${id}/edit`}
@@ -25,7 +25,7 @@ export function UpdateTask({ id }: { id: string }) {
   );
 }
 
-export function DeleteTask({ id }: { id: string }) {
+export function DeleteTask({ id }: { id: string }): React.JSX.Element {
   const deleteTaskWithId = deleteTask.bind(null, id);
   return (
     <form action={deleteTaskWithId}>

@@ -1,6 +1,6 @@
 import { fetchQuerySnapshot } from '@/lib/dal/query';
 
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const payload = await fetchQuerySnapshot();
     return Response.json(payload);

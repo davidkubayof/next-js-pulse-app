@@ -8,7 +8,9 @@ export type UserPublic = {
 };
 
 /** Credential lookup — no artificial delay (login UX). */
-export async function findUserWithPasswordByEmail(email: string) {
+export async function findUserWithPasswordByEmail(
+  email: string,
+): Promise<{ id: string; name: string | null; email: string; password: string } | null> {
   return prisma.user.findUnique({
     where: { email },
   });

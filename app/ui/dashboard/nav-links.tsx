@@ -28,7 +28,7 @@ const links = [
   { name: 'Query', href: '/query', icon: MagnifyingGlassIcon },
 ];
 
-export default function NavLinks() {
+export default function NavLinks(): React.JSX.Element {
   const pathname = usePathname();
   return (
     <>

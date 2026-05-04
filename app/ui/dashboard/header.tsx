@@ -3,7 +3,7 @@ import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { CreateTask } from '../tasks/buttons';
 import Image from 'next/image';
 
-export default async function Header() {
+export default async function Header(): Promise<React.JSX.Element | null> {
   const session = await auth();
   if (!session?.user) return null;
   const { name, email, image } = session.user;

@@ -21,7 +21,7 @@ export default function EditTaskForm({
 }: {
   task: TaskFormFields;
   users: AssigneePickerUser[];
-}) {
+}): React.JSX.Element {
   const initialState: State = { message: null, errors: {} };
   const updateTaskWithId = updateTask.bind(null, task.id);
   const [state, formAction] = useActionState(updateTaskWithId, initialState);

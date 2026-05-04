@@ -15,7 +15,11 @@ import {
 import { Button } from '@/ui/button';
 import { TASK_PRIORITIES, TASK_STATUSES } from '@/lib/taskEnums';
 
-export default function TaskForm({ users }: { users: { id: string; name: string }[] }) {
+export default function TaskForm({
+  users,
+}: {
+  users: { id: string; name: string }[];
+}): React.JSX.Element {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createTask, initialState);
 

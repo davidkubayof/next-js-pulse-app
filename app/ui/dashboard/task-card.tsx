@@ -14,7 +14,7 @@ const iconMap = {
   total: QueueListIcon,
   logs: ListBulletIcon,
 };
-export default async function CardWrapper() {
+export default async function CardWrapper(): Promise<React.JSX.Element> {
  const { 
     totalTasksCount, 
     inProgressCount, 
@@ -38,7 +38,7 @@ export function Card({
   title: string;
   value: number | string;
   type: 'active' | 'completed' | 'total' | 'logs';
-}) {
+}): React.JSX.Element {
   const Icon = iconMap[type];
 
   return (

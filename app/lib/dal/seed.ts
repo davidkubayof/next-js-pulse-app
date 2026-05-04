@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '@/lib/db';
 import { users, tasks, logs } from '@/lib/placeholder-data';
 
-async function seedUsers() {
+async function seedUsers(): Promise<void> {
   const hashedPassword = await bcrypt.hash('123456', 10);
   await Promise.all(
     users.map((user) =>
@@ -20,7 +20,7 @@ async function seedUsers() {
   );
 }
 
-async function seedTasks() {
+async function seedTasks(): Promise<void> {
   await Promise.all(
     tasks.map((task) =>
       prisma.task.upsert({
@@ -39,7 +39,7 @@ async function seedTasks() {
   );
 }
 
-async function seedAuditLogs() {
+async function seedAuditLogs(): Promise<void> {
   await Promise.all(
     logs.map((log) =>
       prisma.auditLog.upsert({
@@ -57,7 +57,7 @@ async function seedAuditLogs() {
   );
 }
 
-export async function seedDatabase() {
+export async function seedDatabase(): Promise<void> {
   await seedUsers();
   await seedTasks();
   await seedAuditLogs();

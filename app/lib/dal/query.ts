@@ -2,7 +2,11 @@ import { prisma } from '@/lib/db';
 import { delay, DEMO_READ_DELAY_MS } from '@/lib/delay';
 
 /** Safe snapshot for diagnostics — never exposes password hashes. */
-export async function fetchQuerySnapshot() {
+export async function fetchQuerySnapshot(): Promise<{
+  users: { id: string; name: string | null; email: string }[];
+  tasks: Awaited<ReturnType<typeof prisma.task.findMany>>;
+  logs: Awaited<ReturnType<typeof prisma.auditLog.findMany>>;
+}> {
   await delay(DEMO_READ_DELAY_MS);
   const [users, tasks, logs] = await Promise.all([
     prisma.user.findMany({

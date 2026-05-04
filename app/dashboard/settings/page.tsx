@@ -1,7 +1,7 @@
 import { auth } from "../../../auth"; 
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+export default async function Page(): Promise<React.JSX.Element> {
   const session = await auth();  
   if (!session?.user) {
     redirect("/login"); 

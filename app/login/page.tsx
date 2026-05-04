@@ -2,7 +2,7 @@ import AcmeLogo from '@/ui/pulse-logo';
 import LoginForm from '@/ui/login-form';
 import { Suspense } from 'react';
 
-export default function LoginPage() {
+export default function LoginPage(): React.JSX.Element {
   return (
     <main className="flex items-center justify-center min-h-screen bg-slate-50 relative overflow-hidden">
       

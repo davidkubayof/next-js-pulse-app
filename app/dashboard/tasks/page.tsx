@@ -16,7 +16,7 @@ export default async function Page(props: {
     query?: string;
     page?: string;
   }>;
-}) {
+}): Promise<React.JSX.Element> {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;  
