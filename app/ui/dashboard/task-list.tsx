@@ -3,8 +3,8 @@ import TaskList from './revenue-chart';
 import { lusitana } from '@/ui/fonts';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 
-export default async function LatestTasksWrapper(): Promise<React.JSX.Element> {
-  const tasks = await fetchLatestTasks();
+export default async function LatestTasksWrapper({ userId }: { userId?: string }): Promise<React.JSX.Element> {
+  const tasks = await fetchLatestTasks({ userId });
 
   if (!tasks || tasks.length === 0) {
     return (

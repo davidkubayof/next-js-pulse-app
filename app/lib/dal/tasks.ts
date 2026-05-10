@@ -35,17 +35,21 @@ function taskSearchWhere(query: string): PrismaClient.Prisma.TaskWhereInput {
   };
 }
 
-export async function fetchCardData(): Promise<{
-  totalTasksCount: number;
-  inProgressCount: number;
-  completedCount: number;
-}> {
+export async function fetchCardData(filters?: { userId?: string }) {
   await delay(DEMO_READ_DELAY_MS);
+  const { userId } = filters || {};
+  
+  // בניית תנאי ה-Where בצורה דינמית
+  const whereClause = {
+    isDeleted: false,
+    ...(userId ? { userId } : {}),
+  };
+
   try {
     const [totalTasksCount, inProgressCount, completedCount] = await Promise.all([
-      prisma.task.count({ where: { isDeleted: false } }),
-      prisma.task.count({ where: { isDeleted: false, status: 'IN_PROGRESS' } }),
-      prisma.task.count({ where: { isDeleted: false, status: 'DONE' } }),
+      prisma.task.count({ where: whereClause }),
+      prisma.task.count({ where: { ...whereClause, status: 'IN_PROGRESS' } }),
+      prisma.task.count({ where: { ...whereClause, status: 'DONE' } }),
     ]);
     return { totalTasksCount, inProgressCount, completedCount };
   } catch (error) {
@@ -54,11 +58,15 @@ export async function fetchCardData(): Promise<{
   }
 }
 
-export async function fetchLatestTasks(): Promise<Task[]> {
+export async function fetchLatestTasks(filters?: { userId?: string }) {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.task.findMany({
-      where: { isDeleted: false },
+      take: 6,
+      where: { 
+        isDeleted: false,
+        ...(filters?.userId ? { userId: filters.userId } : {}),
+      },
       orderBy: { createdAt: 'desc' },
     });
   } catch (error) {

@@ -14,12 +14,12 @@ const iconMap = {
   total: QueueListIcon,
   logs: ListBulletIcon,
 };
-export default async function CardWrapper(): Promise<React.JSX.Element> {
+export default async function CardWrapper({ userId }: { userId?: string }): Promise<React.JSX.Element> {
  const { 
     totalTasksCount, 
     inProgressCount, 
     completedCount 
-  } = await fetchCardData();
+  } = await fetchCardData({ userId });
   const count = await fetchDailyLogsCount();
   return (
     <>

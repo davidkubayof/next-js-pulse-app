@@ -3,8 +3,12 @@ import clsx from 'clsx';
 import { lusitana } from '@/ui/fonts';
 import { fetchLatestAuditLogs, type AuditLogWithUser } from '@/lib/dal/auditLog';
 
-export default async function LatestLogs(): Promise<React.JSX.Element> {
-  const latestLogs = await fetchLatestAuditLogs();
+export default async function LatestLogs({
+  userId
+}: {
+  userId?: string
+}): Promise<React.JSX.Element> {
+  const latestLogs = await fetchLatestAuditLogs(userId);
 
   return (
     <div className="flex w-full flex-col md:col-span-4">
@@ -46,8 +50,8 @@ export default async function LatestLogs(): Promise<React.JSX.Element> {
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className={clsx(
                       "text-[11px] font-extrabold px-2 py-1 rounded-md border uppercase tracking-tight",
-                      log.action.includes('DELETE') 
-                        ? 'bg-red-50 text-red-700 border-red-100' 
+                      log.action.includes('DELETE')
+                        ? 'bg-red-50 text-red-700 border-red-100'
                         : 'bg-blue-50 text-blue-700 border-blue-100'
                     )}>
                       {log.action}

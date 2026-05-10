@@ -8,11 +8,12 @@ export type AuditLogWithUser = PrismaClient.Prisma.AuditLogGetPayload<{
   };
 }>;
 
-export async function fetchLatestAuditLogs(): Promise<AuditLogWithUser[]> {
+export async function fetchLatestAuditLogs(userId?: string): Promise<AuditLogWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.auditLog.findMany({
       take: 5,
+      where: userId ? { userId } : {},
       orderBy: { createdAt: 'desc' },
       include: { user: { select: { name: true } } },
     });
@@ -39,23 +40,33 @@ export async function fetchDailyLogsCount(): Promise<number> {
   }
 }
 
-export async function fetchAuditLogs(): Promise<AuditLogWithUser[]> {
+export interface AuditLogFilters {
+  user?: string;
+  action?: string;
+  details?: string;
+}
+
+export async function fetchAuditLogs(filters: AuditLogFilters = {}): Promise<AuditLogWithUser[]> {
   await delay(DEMO_READ_DELAY_MS);
+
+  const { user, action, details } = filters;
+
   try {
     return await prisma.auditLog.findMany({
+      where: {
+        AND: [
+          user ? { user: { name: { contains: user, mode: 'insensitive' } } } : {},
+          action ? { action: { contains: action, mode: 'insensitive' } } : {},
+          details ? { details: { contains: details, mode: 'insensitive' } } : {},
+        ]
+      },
       include: {
-        user: {
-          select: {
-            name: true,
-          },
-        },
+        user: { select: { name: true } },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error('Database Error:', error);
+    console.error('[DATABASE_ERROR] fetchAuditLogs:', error);
     throw new Error('Failed to fetch audit logs.');
   }
 }
