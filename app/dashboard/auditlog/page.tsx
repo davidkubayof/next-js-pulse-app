@@ -7,7 +7,7 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page({ searchParams }: PageProps): Promise<React.JSX.Element> {
   const filters = await searchParams;
 
   const logs = await fetchAuditLogs({

@@ -7,7 +7,7 @@ const ACTIONS = ['CREATE', 'UPDATE', 'DELETE', 'RESTORED'];
 /**
  * FilterBar - רכיב סינון מרכזי ליומני מערכת
  */
-export default function FilterBar() {
+export default function FilterBar(): React.JSX.Element {
   const { setFilter, searchParams } = useAuditFilters();
 
   return (

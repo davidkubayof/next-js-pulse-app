@@ -11,11 +11,10 @@ export default async function Page({
   searchParams, // בגרסה 15 זה מגיע כ-Promise
 }: {
   searchParams: Promise<{ userId?: string; status?: string }>;
-}) {
+}): Promise<React.JSX.Element> {
   // כאן הפתרון לשגיאה: אנחנו מחכים לפרמטרים לפני השימוש
   const resolvedSearchParams = await searchParams;
   const userId = resolvedSearchParams?.userId;
-  const status = resolvedSearchParams?.status;
 
   return (
     <main>

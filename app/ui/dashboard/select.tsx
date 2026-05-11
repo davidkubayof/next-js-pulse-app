@@ -11,7 +11,7 @@ export default function Select({
 }: {
     placeholder: string;
     users: { id: string; name: string; email: string; }[]
-}) {
+}): React.JSX.Element {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();

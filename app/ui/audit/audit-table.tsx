@@ -2,7 +2,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { RelativeTime } from '@/ui/dashboard/audit-relative-time';
 import { AuditLogWithUser } from '@/lib/dal/auditLog';
 
-export function AuditTable({ logs }: { logs: AuditLogWithUser[] }) {
+export function AuditTable({ logs }: { logs: AuditLogWithUser[] }): React.JSX.Element {
   if (logs.length === 0) {
     return (
       <div className="p-20 text-center bg-white rounded-xl border">

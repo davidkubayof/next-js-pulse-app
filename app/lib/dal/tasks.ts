@@ -35,7 +35,12 @@ function taskSearchWhere(query: string): PrismaClient.Prisma.TaskWhereInput {
   };
 }
 
-export async function fetchCardData(filters?: { userId?: string }) {
+export interface CardData {
+  totalTasksCount: number;
+  inProgressCount: number;
+  completedCount: number;
+}
+export async function fetchCardData(filters?: { userId?: string }): Promise<CardData> {
   await delay(DEMO_READ_DELAY_MS);
   const { userId } = filters || {};
   
@@ -58,7 +63,7 @@ export async function fetchCardData(filters?: { userId?: string }) {
   }
 }
 
-export async function fetchLatestTasks(filters?: { userId?: string }) {
+export async function fetchLatestTasks(filters?: { userId?: string }): Promise<Task[]> {
   await delay(DEMO_READ_DELAY_MS);
   try {
     return await prisma.task.findMany({
