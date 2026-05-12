@@ -96,28 +96,18 @@ export async function fetchTasksPages(query: string): Promise<number> {
   }
 }
 
-export async function fetchFilteredTasks(
-  query: string,
-  currentPage: number,
-): Promise<TaskWithUser[]> {
-  await delay(DEMO_READ_DELAY_MS);
-  const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-  const search = taskSearchWhere(query);
+export async function fetchFilteredTasks(): Promise<Task[]>{
   try {
     return await prisma.task.findMany({
-      where: {
-        AND: [{ isDeleted: false }, ...(Object.keys(search).length ? [search] : [])],
-      },
+      // כאן חשוב לא לשים where: { isDeleted: false }
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { name: true } },
       },
       orderBy: { createdAt: 'desc' },
-      take: ITEMS_PER_PAGE,
-      skip,
     });
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch tasks.');
+    return [];
   }
 }
 

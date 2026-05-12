@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   description: "Pulse - Scalable Task Management System with Audit Logs.",
 };
 
+// @/app/layout.tsx
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,7 +31,8 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/* הסרת flex-col ו-min-h-full כדי למנוע גלילה כפולה מהשורש */}
+      <body className="h-full overflow-hidden">{children}</body>
     </html>
   );
 }
